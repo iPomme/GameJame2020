@@ -1,4 +1,5 @@
 ﻿using System;
+using DefaultNamespace;
 using WebSocketSharp;
 using WebSocketSharp.Server;
 using UnityEngine;
@@ -11,11 +12,12 @@ public class WebSocket : MonoBehaviour
 
     public GameObject paddleTracker;
 
+    public  GameStatus gs;
     // Start is called before the first frame update
     private WebSocketServer wssv;
     private string temperature;
     private PaddleWSHandler PaddleWsHnd { get; set; }
-    private EchoWSHandler EchoWsHnd { get; set; }
+    private HulaWSHandler HulaWsHnd { get; set; }
 
     private void Start()
     {
@@ -27,22 +29,25 @@ public class WebSocket : MonoBehaviour
         wssv = new WebSocketServer(port);
 
         PaddleWsHnd = new PaddleWSHandler(paddleTracker);
-        EchoWsHnd = new EchoWSHandler(paddleTracker);
+        HulaWsHnd = new HulaWSHandler(paddleTracker, gs);
         wssv.AddWebSocketService<PaddleWSHandler>("/paddle", () => PaddleWsHnd);
-        wssv.AddWebSocketService<EchoWSHandler>("/corona", () => EchoWsHnd);
+        wssv.AddWebSocketService<HulaWSHandler>("/corona", () => HulaWsHnd);
 
         wssv.Start();
 
         Debug.LogFormat("Websocket Server started on port {0}", port);
     }
     
-    private class EchoWSHandler : WebSocketBehavior
+    private class HulaWSHandler : WebSocketBehavior
     {
         private PaddleTracker _tracker;
+        private GameStatus _gameStatus;
 
-        public EchoWSHandler(GameObject tracker)
+        private int _lastHulaCount = 0;
+        public HulaWSHandler(GameObject tracker, GameStatus gameStatus)
         {
             _tracker = tracker.GetComponent<PaddleTracker>();
+            _gameStatus = gameStatus;
         }
          protected override void OnClose(CloseEventArgs e)
         {
@@ -66,40 +71,21 @@ public class WebSocket : MonoBehaviour
         protected override void OnMessage(MessageEventArgs e)
         {
             var buffer = e.RawData;
-            // Debug.LogFormat("Got message from the websocket value'{0}'", BitConverter.ToString(buffer));
-            //
-            // Debug.LogFormat("The byte buffer is {0} length", buffer.Length);
-            /*
-                struct sensorData_t{
-                  float quatI;
-                  float quatJ;
-                  float quatK;
-                  float quatReal;
-                  float hula_speed;
-                  float hula_diameter;
-                  float hula_count;
-                };             */
-            //float qx = BitConverter.ToSingle(buffer, 0);
-            //float qy = BitConverter.ToSingle(buffer, 4);
-            //float qz = BitConverter.ToSingle(buffer, 8);
-            //float qw = BitConverter.ToSingle(buffer, 12);
             float hula_speed = BitConverter.ToSingle(buffer, 16);
             float hula_diameter = BitConverter.ToSingle(buffer, 20);
             float hula_count = BitConverter.ToSingle(buffer, 24);
 
-            /* Debug.LogFormat(
-                 "Got message from the websocket \nqx:'{0}' qy:'{1}' qz:'{2}' qw:'{3}' hula_s:'{4}' hula_d:'{5}' hula_c:'{6}'",
-                 qx, qy,
-                 qz, qw,
-                 hula_speed,hula_diameter,hula_count);
-             */
+            int currentHulaCount = Convert.ToInt32(hula_count);
+            
              Debug.LogFormat(
                   "Got message from the websocket \n hula_s:'{0}' hula_d:'{1}' hula_c:'{2}'",
-                  hula_speed,hula_diameter,hula_count);
-              
-           //https://forums.adafruit.com/viewtopic.php?t=81671
-           // _tracker.setNewPosition(new Quaternion(-qw, -qy, -qz, qx));
-          // _tracker.setNewPosition(new Quaternion(qx, qy, qz, qw)); // BEST FIT !!
+                  hula_speed,hula_diameter,currentHulaCount);
+
+             if (currentHulaCount != _lastHulaCount && currentHulaCount % _gameStatus.numberOfHulaToSpawn == 0)
+             {
+                 Debug.Log("Spawn an object...");
+                 _lastHulaCount = currentHulaCount;
+             }
 
         }
     }
