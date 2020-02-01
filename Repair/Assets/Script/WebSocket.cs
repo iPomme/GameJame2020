@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 
 public class WebSocket : MonoBehaviour
 {
-    public int port = 8990;
+    public int port = 8989;
 
     public GameObject paddleTracker;
 
@@ -70,31 +70,37 @@ public class WebSocket : MonoBehaviour
             //
             // Debug.LogFormat("The byte buffer is {0} length", buffer.Length);
             /*
-                  struct sensorData_t{
+                struct sensorData_t{
                   float quatI;
                   float quatJ;
                   float quatK;
                   float quatReal;
-                  
-                };
+                  float hula_speed;
+                  float hula_diameter;
+                  float hula_count;
+                };             */
+            //float qx = BitConverter.ToSingle(buffer, 0);
+            //float qy = BitConverter.ToSingle(buffer, 4);
+            //float qz = BitConverter.ToSingle(buffer, 8);
+            //float qw = BitConverter.ToSingle(buffer, 12);
+            float hula_speed = BitConverter.ToSingle(buffer, 16);
+            float hula_diameter = BitConverter.ToSingle(buffer, 20);
+            float hula_count = BitConverter.ToSingle(buffer, 24);
+
+            /* Debug.LogFormat(
+                 "Got message from the websocket \nqx:'{0}' qy:'{1}' qz:'{2}' qw:'{3}' hula_s:'{4}' hula_d:'{5}' hula_c:'{6}'",
+                 qx, qy,
+                 qz, qw,
+                 hula_speed,hula_diameter,hula_count);
              */
-            float qx = BitConverter.ToSingle(buffer, 0);
-            float qy = BitConverter.ToSingle(buffer, 4);
-            float qz = BitConverter.ToSingle(buffer, 8);
-            float qw = BitConverter.ToSingle(buffer, 12);
-
-            Debug.LogFormat(
-                "Got message from the websocket \nqx:'{0}' qy:'{1}' qz:'{2}' qw:'{3}'",
-                qx, qy,
-                qz, qw);
-
+             Debug.LogFormat(
+                  "Got message from the websocket \n hula_s:'{0}' hula_d:'{1}' hula_c:'{2}'",
+                  hula_speed,hula_diameter,hula_count);
+              
            //https://forums.adafruit.com/viewtopic.php?t=81671
            // _tracker.setNewPosition(new Quaternion(-qw, -qy, -qz, qx));
-           _tracker.setNewPosition(new Quaternion(qx, qy, qz, qw));
+          // _tracker.setNewPosition(new Quaternion(qx, qy, qz, qw)); // BEST FIT !!
 
-            
-           
-            
         }
     }
 
