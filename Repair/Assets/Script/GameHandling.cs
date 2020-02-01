@@ -23,6 +23,7 @@ public class GameHandling : MonoBehaviour
         invertedSphereRenderer = invertedSphere.GetComponentInChildren<Renderer>();
         hideInvertedSphere();
         _originalColor = invertedSphereRenderer.material.color;
+        Debug.Log("GameHandling Started.");
     }
 
     // Update is called once per frame
@@ -58,6 +59,8 @@ public class GameHandling : MonoBehaviour
 
     IEnumerator Fade()
     {
+        invertedSphereRenderer.enabled = true;
+
         for (float ft = 0f; ft <= 1; ft += 0.1f)
         {
             Color c = invertedSphereRenderer.material.color;
@@ -76,6 +79,7 @@ public class GameHandling : MonoBehaviour
     {
         invertedSphereRenderer.material.color = new Color(invertedSphereRenderer.material.color.r,
             invertedSphereRenderer.material.color.g, invertedSphereRenderer.material.color.b, 0f);
+        invertedSphereRenderer.enabled = false;
     }
 
     private IEnumerator blackInvertedSphere()
