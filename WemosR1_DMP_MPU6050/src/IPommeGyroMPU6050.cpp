@@ -46,6 +46,81 @@ TaskHandle_t mpuRunningTask;
 */
 #define printfloatx(Name,Variable,Spaces,Precision,EndTxt) print(Name); {char S[(Spaces + Precision + 3)];Serial.print(F(" ")); Serial.print(dtostrf((float)Variable,Spaces,Precision ,S));}Serial.print(EndTxt);//Name,Variable,Spaces,Precision,EndTxt
 
+int PrintRealAccel(int16_t *accel, int32_t *quat, uint16_t SpamDelay = 100) {
+  Quaternion q;
+  VectorFloat gravity;
+  VectorInt16 aa, aaReal;
+  spamtimer(SpamDelay) {// non blocking delay before printing again. This skips the following code when delay time (ms) hasn't been met
+    mpu.GetQuaternion(&q, quat);
+    mpu.GetGravity(&gravity, &q);
+    mpu.SetAccel(&aa, accel);
+    mpu.GetLinearAccel(&aaReal, &aa, &gravity);
+    Serial.printfloatx(F("aReal x")  , aaReal.x , 9, 4, F(",  ")); //printfloatx is a Helper Macro that works with Serial.print that I created (See #define above)
+    Serial.printfloatx(F("y")        , aaReal.y , 9, 4, F(",  "));
+    Serial.printfloatx(F("z")        , aaReal.z, 9, 4, F(",  "));
+    Serial.println("");
+  }
+
+  return 1;
+}
+
+bool detected[10];
+bool circle_completed[4];
+unsigned long millisec;
+
+/*Function to find maximum of x and y*/
+    int my_max(int x, int y) 
+    { 
+        return x ^ ((x ^ y) & -(x < y));  
+    } 
+    
+ int hula_max_diameter=0;
+
+
+int PrintWorldAccel(int16_t *accel, int32_t *quat, uint16_t SpamDelay = 100) {
+  Quaternion q;
+  VectorFloat gravity;
+  VectorInt16 aa, aaReal, aaWorld;
+   
+  spamtimer(SpamDelay) {// non blocking delay before printing again. This skips the following code when delay time (ms) hasn't been met
+    mpu.GetQuaternion(&q, quat);
+    mpu.GetGravity(&gravity, &q);
+    mpu.SetAccel(&aa, accel);
+    mpu.GetLinearAccel(&aaReal, &aa, &gravity);
+    mpu.GetLinearAccelInWorld(&aaWorld, &aaReal, &q);
+//    if(aaWorld.x > 5000 && !detected[0]) {Serial.print("x > detected : "); hula_max_diameter = my_max(aaWorld.x,hula_max_diameter); circle_completed[0] = true; Serial.printfloatx(F("x")  , aaWorld.x , 9, 4, F(",   ")); detected[0]=true;} else detected[0]=false;  
+//    if(aaWorld.y > 5000 && !detected[1]) {Serial.print("y > detected : ");  hula_max_diameter = my_max(aaWorld.y,hula_max_diameter); circle_completed[1] = true;  Serial.printfloatx(F("y")        , aaWorld.y, 9, 4, F(",   ")); detected[1]=true;} else detected[1]=false;  
+    if(aaWorld.x > 5000 && !detected[0]) {Serial.print("x > detected : "); hula_max_diameter = my_max(aaWorld.x,hula_max_diameter);  detected[0]=true;}  
+    if(aaWorld.y > 5000 && !detected[1]) {Serial.print("y > detected : ");  hula_max_diameter = my_max(aaWorld.y,hula_max_diameter);  detected[1]=true;}  
+    //if(aaWorld.z > 3000 && !detected[2]) {Serial.print("z > detected : ");  Serial.printfloatx(F("z")        , aaWorld.z, 9, 4, F(",  ")); detected[2]=true;} else detected[2]=false; 
+//    if(aaWorld.x < -5000 && !detected[3]) {Serial.print("-x < detected : ");  hula_max_diameter = my_max(aaWorld.x*-1,hula_max_diameter); circle_completed[2] = true;  Serial.printfloatx(F("x")  , aaWorld.x , 9, 4, F(",   ")); detected[3]=true;} else detected[3]=false;  
+//    if(aaWorld.y < -5000 && !detected[4]) {Serial.print("-y < detected : ");  hula_max_diameter = my_max(aaWorld.x*-1,hula_max_diameter); circle_completed[3] = true;  Serial.printfloatx(F("y")        , aaWorld.y, 9, 4, F(",   ")); detected[4]=true;} else detected[4]=false;  
+    if(aaWorld.x < -5000 && !detected[2]) {Serial.print("-x < detected : ");  hula_max_diameter = my_max(aaWorld.x*-1,hula_max_diameter);  detected[2]=true;} 
+    if(aaWorld.y < -5000 && !detected[3]) {Serial.print("-y < detected : ");  hula_max_diameter = my_max(aaWorld.x*-1,hula_max_diameter); detected[3]=true;} 
+    //if(aaWorld.z < -2000 && !detected[5]) {Serial.print("-z < detected : ");  Serial.printfloatx(F("z")        , aaWorld.z, 9, 4, F(",  ")); detected[5]=true;} else detected[5]=false;
+     
+    if(detected[0]&&detected[1]&&detected[2]&&detected[3])
+    {
+      wsd.sensor.hula_count++;
+      wsd.sensor.hula_diameter = hula_max_diameter;
+      hula_max_diameter=0;
+      detected[0] =false;detected[1] =false;detected[2] =false;detected[3] =false;  
+      if(millis() > millisec) wsd.sensor.hula_speed = millis()-millisec;
+      millisec = millis();
+      Serial.print("  -- COMPLETION TIME: "); Serial.print(wsd.sensor.hula_speed);
+      Serial.print("  -- MAX CIRCONFERENCE: "); Serial.print(wsd.sensor.hula_diameter);
+      Serial.print("  -- HULA COUNTS: "); Serial.print(wsd.sensor.hula_count);
+      Serial.println("");
+    }
+
+    //Serial.printfloatx(F("aWorld x")  , aaWorld.x , 9, 4, F(",   ")); //printfloatx is a Helper Macro that works with Serial.print that I created (See #define above)
+    //Serial.printfloatx(F("y")        , aaWorld.y, 9, 4, F(",   "));
+    //Serial.printfloatx(F("z")        , aaWorld.z, 9, 4, F(",  "));
+  }
+
+
+  return 1;
+}
 
 
 int PrintQuaternion(int32_t *quat, uint16_t SpamDelay = 100) {
@@ -73,13 +148,13 @@ char ip_str[20];
 
 void mpuRunningTaskCode( void * parameter) {
    for(;;) {
-     webSocketClient1.loop();
+        webSocketClient1.loop();
     if(isConnected)
     {
      mpu.dmp_read_fifo();// Must be in loop
      mpu.OverflowProtection();
     }
-  }
+   }
 
  }
 
@@ -102,6 +177,7 @@ bool posChanged()
 
 void onMinTimer()
 {
+  /*
       if(isConnected) Serial.print("connected:");
       Serial.print("quatI:");
       Serial.print(wsd.sensor.quatI, 2);
@@ -115,11 +191,13 @@ void onMinTimer()
       Serial.print("quatReal:");
       Serial.print(wsd.sensor.quatReal, 2);
       Serial.println();
+      */
 }
+
 
 void onSecTimer()
 {
-}
+ }
 
 
 
@@ -331,6 +409,7 @@ void setup()
   mpu.SetAddress(MPU6050_ADDRESS_AD0_LOW).CalibrateMPU().load_DMP_Image();// Does it all for you with Calibration
 #endif
   mpu.on_FIFO(print_Values);
+  
   // https://randomnerdtutorials.com/esp32-dual-core-arduino-ide/
   xTaskCreatePinnedToCore(
       mpuRunningTaskCode, /// Function to implement the task 
@@ -358,10 +437,10 @@ void setup()
       delay(1000);
   }
 
-  resolve_mdns_host("Hikaru");
+  //resolve_mdns_host("Hikaru");
   //resolve_mdns_host("Android");
-  //resolve_mdns_host("FRODO");
-	webSocketClient1.begin(ip_str, 8990, "/corona");
+  resolve_mdns_host("FRODO");
+	webSocketClient1.begin(ip_str, 8989, "/corona");
 
 	// event handler
 	webSocketClient1.onEvent(webSocketClientEvent);
@@ -372,7 +451,7 @@ void setup()
 
 void loop()
 {
-
+ 
 }
 
 
@@ -381,9 +460,12 @@ void loop()
 //***************************************************************************************
 
 void print_Values (int16_t *gyro, int16_t *accel, int32_t *quat, uint32_t *timestamp) {
+  uint8_t Spam_Delay = 100; // Built in Blink without delay timer preventing Serial.print SPAM
   Quaternion q;
   mpu.GetQuaternion(&q, quat);
-  uint8_t Spam_Delay = 100; // Built in Blink without delay timer preventing Serial.print SPAM
+  //PrintRealAccel(accel, quat,  Spam_Delay);
+  PrintWorldAccel(accel, quat, Spam_Delay);
+ 
   wsd.sensor.quatI=q.x;
   wsd.sensor.quatJ=q.y;
   wsd.sensor.quatK=q.z;
@@ -395,6 +477,7 @@ void print_Values (int16_t *gyro, int16_t *accel, int32_t *quat, uint32_t *times
         webSocketClient1.sendBIN(wsd.bytePacket, sizeof(sensorData_t));
 
       }
-      PrintQuaternion(quat, Spam_Delay);
+
+      //PrintQuaternion(quat, Spam_Delay);
     }  
 }

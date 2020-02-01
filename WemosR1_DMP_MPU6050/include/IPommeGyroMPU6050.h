@@ -14,6 +14,9 @@ struct sensorData_t{
   float quatJ;
   float quatK;
   float quatReal;
+  float hula_speed;
+  float hula_diameter;
+  float hula_count;
 };
 
 union Websock_Packet_t{
