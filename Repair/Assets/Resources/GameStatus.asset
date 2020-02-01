@@ -16,5 +16,5 @@ MonoBehaviour:
   waterLevelCheckIntervalInSeconds: 1
   FailureGeneratorIntervalInSecond: 1
   headsetLevel: 0.915
-  waterLevel: 0.543
+  waterLevel: 1.39
   gameover: 0
