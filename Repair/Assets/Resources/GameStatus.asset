@@ -9,12 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8eae861f97152491ca28238ddc2cbfe2, type: 3}
+  m_Script: {fileID: 11500000, guid: 1d5cc50b21a23164a97fd1a62c5c35ce, type: 3}
   m_Name: GameStatus
   m_EditorClassIdentifier: 
-  waterLevelSpeed: 100
-  waterLevelCheckIntervalInSeconds: 1
-  FailureGeneratorIntervalInSecond: 1
-  headsetLevel: 0.915
-  waterLevel: 0.543
+  waterLevelSpeed: 0
+  waterLevelCheckIntervalInSeconds: 0
+  FailureGeneratorIntervalInSecond: 0
+  headsetLevel: 0
+  waterLevel: 0
   gameover: 0

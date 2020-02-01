@@ -311,8 +311,8 @@ void setup()
   }
 
   //resolve_mdns_host("Hikaru");
-  resolve_mdns_host("Android");
-  //resolve_mdns_host("FRODO");
+  //resolve_mdns_host("Android");
+  resolve_mdns_host("FRODO");
 	webSocketClient1.begin(ip_str, 8989, "/paddle");
 
 	// event handler

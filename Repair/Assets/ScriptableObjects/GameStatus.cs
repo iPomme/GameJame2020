@@ -12,17 +12,22 @@ namespace DefaultNamespace
         public int waterLevelCheckIntervalInSeconds;
 
         public int FailureGeneratorIntervalInSecond;
-        public int NbOfHoles
-        {
-            get => holes.Length;
-            set { holes = new Hole[value]; }
-        }
 
+        public int numberOfHulaToSpawn;
+        
         [Header("Game Status")] public float headsetLevel;
         public float waterLevel;
         public bool gameover;
 
-        private Hole[] holes;
+        public GameObject[] holes;
+
+        public void restartGame()
+        {
+            foreach (GameObject hole in holes)
+            {
+                
+            }
+        }
     }
 
     public struct Hole
