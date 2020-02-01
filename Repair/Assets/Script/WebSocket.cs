@@ -27,7 +27,7 @@ public class WebSocket : MonoBehaviour
         wssv = new WebSocketServer(port);
 
         PaddleWsHnd = new PaddleWSHandler(paddleTracker);
-        EchoWsHnd = new EchoWSHandler();
+        EchoWsHnd = new EchoWSHandler(paddleTracker);
         wssv.AddWebSocketService<PaddleWSHandler>("/paddle", () => PaddleWsHnd);
         wssv.AddWebSocketService<EchoWSHandler>("/corona", () => EchoWsHnd);
 
@@ -38,6 +38,12 @@ public class WebSocket : MonoBehaviour
     
     private class EchoWSHandler : WebSocketBehavior
     {
+        private PaddleTracker _tracker;
+
+        public EchoWSHandler(GameObject tracker)
+        {
+            _tracker = tracker.GetComponent<PaddleTracker>();
+        }
          protected override void OnClose(CloseEventArgs e)
         {
             Debug.Log("OnClose()");
@@ -83,7 +89,8 @@ public class WebSocket : MonoBehaviour
                 qz, qw);
 
            //https://forums.adafruit.com/viewtopic.php?t=81671
-            // _tracker.setNewPosition(new Quaternion(-qw, -qy, -qz, qx));
+           // _tracker.setNewPosition(new Quaternion(-qw, -qy, -qz, qx));
+           _tracker.setNewPosition(new Quaternion(qx, qy, qz, qw));
 
             
            
