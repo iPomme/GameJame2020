@@ -1,37 +1,90 @@
 fileFormatVersion: 2
-guid: 4d11a6759136642b2bacdc23bdea3c3f
+guid: 9794d3e3c05bd4e76ab23f17bf8c95d6
 ModelImporter:
   serializedVersion: 19300
   internalIDToNameTable:
   - first:
-      74: -623603649343465320
-    second: Scene
-  externalObjects:
+      74: 195318216197808479
+    second: Cube|ArmatureAction
   - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: black
-    second: {fileID: 2100000, guid: d8c4cf511112f41aab2e656d16201a47, type: 2}
+      74: -8929536445494971869
+    second: Cube|Cube.002Action
   - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: human_scale
-    second: {fileID: 2100000, guid: 25b2d0e9a2efb42bcab2348ef58fdfea, type: 2}
+      74: -2252302417926332172
+    second: Cube|Cube.003Action
   - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: metal
-    second: {fileID: 2100000, guid: 837d21c5937cd4cc3a10a14e0094d5e7, type: 2}
+      74: 5259475447914872051
+    second: Cube|Cube.004Action
   - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: red
-    second: {fileID: 2100000, guid: 768fd1d6b144a4c599c330e27dbcc3b1, type: 2}
+      74: -3999578356269874737
+    second: Cube|CubeAction
   - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: wood
-    second: {fileID: 2100000, guid: cb2fbcbb3b04347388e613769c2ff3eb, type: 2}
+      74: 7583391367500633076
+    second: Cube.002|ArmatureAction
+  - first:
+      74: 6712369695479197947
+    second: Cube.002|Cube.002Action
+  - first:
+      74: -7944832092688391277
+    second: Cube.002|Cube.003Action
+  - first:
+      74: 9117891803251970930
+    second: Cube.002|Cube.004Action
+  - first:
+      74: -2569477126889815120
+    second: Cube.002|CubeAction
+  - first:
+      74: -7407986575160308887
+    second: Cube.003|ArmatureAction
+  - first:
+      74: 3244617880250996793
+    second: Cube.003|Cube.002Action
+  - first:
+      74: -8906869970063597199
+    second: Cube.003|Cube.003Action
+  - first:
+      74: 2465649831543542797
+    second: Cube.003|Cube.004Action
+  - first:
+      74: -1327517643594879202
+    second: Cube.003|CubeAction
+  - first:
+      74: -5393230992187549672
+    second: Cube.004|ArmatureAction
+  - first:
+      74: 3668844931122048522
+    second: Cube.004|Cube.002Action
+  - first:
+      74: 462318446980670716
+    second: Cube.004|Cube.003Action
+  - first:
+      74: -5755876124362903034
+    second: Cube.004|Cube.004Action
+  - first:
+      74: 6069470996275563646
+    second: Cube.004|CubeAction
+  - first:
+      74: 4781951162920444690
+    second: Armature|ArmatureAction
+  - first:
+      74: -1422011007694221501
+    second: Armature|ArmatureAction.001
+  - first:
+      74: 4828028426687900610
+    second: Armature|Cube.002Action
+  - first:
+      74: -641469621222406232
+    second: Armature|Cube.003Action
+  - first:
+      74: -5366448631078171872
+    second: Armature|Cube.004Action
+  - first:
+      74: 5449073193131188545
+    second: Armature|CubeAction
+  - first:
+      74: -1312446452948849948
+    second: Armature|chaise_dancing
+  externalObjects: {}
   materials:
     materialImportMode: 1
     materialName: 0
@@ -60,18 +113,18 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Scene
-      takeName: Scene
+      name: Armature|chaise_dancing
+      takeName: Armature|chaise_dancing
       internalID: 0
-      firstFrame: 1
-      lastFrame: 250
+      firstFrame: 0
+      lastFrame: 19
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
