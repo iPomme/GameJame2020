@@ -1,11 +1,86 @@
 fileFormatVersion: 2
-guid: 00501fd02b60346039092d4d7d044a81
+guid: 57d4c6c221d854102b157fa174b6636f
 ModelImporter:
   serializedVersion: 19300
   internalIDToNameTable:
   - first:
-      74: -623603649343465320
-    second: Scene
+      74: -8929536445494971869
+    second: Cube|Cube.002Action
+  - first:
+      74: -2252302417926332172
+    second: Cube|Cube.003Action
+  - first:
+      74: 5259475447914872051
+    second: Cube|Cube.004Action
+  - first:
+      74: -3999578356269874737
+    second: Cube|CubeAction
+  - first:
+      74: 6712369695479197947
+    second: Cube.002|Cube.002Action
+  - first:
+      74: -7944832092688391277
+    second: Cube.002|Cube.003Action
+  - first:
+      74: 9117891803251970930
+    second: Cube.002|Cube.004Action
+  - first:
+      74: -2569477126889815120
+    second: Cube.002|CubeAction
+  - first:
+      74: 3244617880250996793
+    second: Cube.003|Cube.002Action
+  - first:
+      74: -8906869970063597199
+    second: Cube.003|Cube.003Action
+  - first:
+      74: 2465649831543542797
+    second: Cube.003|Cube.004Action
+  - first:
+      74: -1327517643594879202
+    second: Cube.003|CubeAction
+  - first:
+      74: 3668844931122048522
+    second: Cube.004|Cube.002Action
+  - first:
+      74: 462318446980670716
+    second: Cube.004|Cube.003Action
+  - first:
+      74: -5755876124362903034
+    second: Cube.004|Cube.004Action
+  - first:
+      74: 6069470996275563646
+    second: Cube.004|CubeAction
+  - first:
+      74: 195318216197808479
+    second: Cube|ArmatureAction
+  - first:
+      74: 7583391367500633076
+    second: Cube.002|ArmatureAction
+  - first:
+      74: -7407986575160308887
+    second: Cube.003|ArmatureAction
+  - first:
+      74: -5393230992187549672
+    second: Cube.004|ArmatureAction
+  - first:
+      74: 4781951162920444690
+    second: Armature|ArmatureAction
+  - first:
+      74: -1422011007694221501
+    second: Armature|ArmatureAction.001
+  - first:
+      74: 4828028426687900610
+    second: Armature|Cube.002Action
+  - first:
+      74: -641469621222406232
+    second: Armature|Cube.003Action
+  - first:
+      74: -5366448631078171872
+    second: Armature|Cube.004Action
+  - first:
+      74: 5449073193131188545
+    second: Armature|CubeAction
   externalObjects: {}
   materials:
     materialImportMode: 1
@@ -33,36 +108,7 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties: []
-    clipAnimations:
-    - serializedVersion: 16
-      name: Scene
-      takeName: Scene
-      internalID: 0
-      firstFrame: 1
-      lastFrame: 250
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 1
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
+    clipAnimations: []
     isReadable: 0
   meshes:
     lODScreenPercentages: []
