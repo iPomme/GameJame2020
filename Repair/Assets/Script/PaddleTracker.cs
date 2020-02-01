@@ -4,23 +4,34 @@ using UnityEngine;
 
 public class PaddleTracker : MonoBehaviour
 {
-    private Quaternion position;
+    public float rotationSpeed = 100f;
+
+    private Quaternion reference;
+    private Quaternion rotation;
     // Start is called before the first frame update
     void Start()
     {
-        position = this.transform.localRotation;
+        reference = transform.rotation;
+        rotation = this.transform.localRotation;
     }
 
     
     // Update is called once per frame
     void Update()
     {
-        this.transform.localRotation = position;
+        // this.gameObject.transform.localRotation =  Quaternion.Slerp(this.gameObject.transform.localRotation,rotation,Time.deltaTime * rotationSpeed);
+        this.gameObject.transform.localRotation = rotation;
+
     }
 
     public void setNewPosition(Quaternion newPosition)
     {
-        position = newPosition;
+        // Quaternion rotTmp = Quaternion.LookRotation(newPosition.ToEuler(), Vector3.down);
+        //
+        // rotTmp.x = newPosition.w;
+        // newPosition *= Quaternion.Euler(Vector3.up * -newPosition.eulerAngles.y);
+        rotation = newPosition;// * Quaternion.Inverse(reference);
+        // this.gameObject.transform.localRotation = rotation;
     }
 }
 
