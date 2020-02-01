@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include "Bno080.h"
-extern "C" int rom_phy_get_vdd33();
+//extern "C" int rom_phy_get_vdd33();
 /*
   Using the BNO080 IMU
   By: Nathan Seidle
@@ -39,8 +39,9 @@ bool dataReady = false;
 // Client
 bool isConnected=false;
 
-WiFiServer server(SERVER_PORT);
-WebSocketsClient webSocketClient;
+WebSocketsClient webSocketClient1;
+//WebSocketsClient webSocketClient2;
+//WebSocketsClient webSocketClient3;
 WiFiMulti wfMulti;
 int netw=0;
 char ip_str[20];
@@ -117,13 +118,15 @@ void webSocketClientEvent(WStype_t type, uint8_t * payload, size_t length) {
 
 	switch(type) {
 		case WStype_DISCONNECTED:
-			Serial.printf("[WSc] Disconnected!\n");
+			//Serial.printf("[WSc] Disconnected!\n");
       isConnected =false;
 			break;
 		case WStype_CONNECTED:
 			Serial.printf("[WSc] Connected to url: %s\n", payload);
 			// send message to server when Connected
-			webSocketClient.sendTXT("Connected");
+			webSocketClient1.sendTXT("Connected");
+		//	webSocketClient2.sendTXT("Connected");
+		//	webSocketClient3.sendTXT("Connected");
       isConnected =true;
 			break;
 		case WStype_TEXT:
@@ -246,8 +249,7 @@ void setup_wifi() {
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
   start_mdns_service();
-  //resolve_mdns_host("Android");
-  resolve_mdns_host("Hikaru");
+
 }
 
 void reconnect() {
@@ -285,7 +287,9 @@ void setup()
 
   Wire.setClock(400000); //Increase I2C data rate to 400kHz
 
-  myIMU.enableRotationVector(50); //Send data update every 50ms
+  //myIMU.enableRotationVector(50); //Send data update every 50ms
+  myIMU.enableGameRotationVector(50);
+  myIMU.enableMagnetometer(50);
   Serial.println(F("Rotation vector enabled"));
   Serial.println(F("Output in form i, j, k, real, accuracy"));
   myIMU.enableActivityClassifier(50, enableActivities, activityConfidences);
@@ -306,15 +310,28 @@ void setup()
       delay(1000);
   }
 
-	webSocketClient.begin(ip_str, 8989, "/paddle");
+  //resolve_mdns_host("Hikaru");
+  resolve_mdns_host("Android");
+  //resolve_mdns_host("FRODO");
+	webSocketClient1.begin(ip_str, 8989, "/paddle");
 
 	// event handler
-	webSocketClient.onEvent(webSocketClientEvent);
+	webSocketClient1.onEvent(webSocketClientEvent);
 
 	// use HTTP Basic Authorization this is optional remove if not needed
 	//webSocket.setAuthorization("user", "Password");
 	// try every 5000 ms again if connection has failed
-	webSocketClient.setReconnectInterval(5000);
+	webSocketClient1.setReconnectInterval(5000);
+  
+/*  resolve_mdns_host("FRODO");
+  webSocketClient2.begin(ip_str, 8989, "/paddle");
+	webSocketClient2.onEvent(webSocketClientEvent);
+	webSocketClient2.setReconnectInterval(5000);
+  resolve_mdns_host("Android");
+  webSocketClient3.begin(ip_str, 8989, "/paddle");
+	webSocketClient3.onEvent(webSocketClientEvent);
+	webSocketClient3.setReconnectInterval(5000);*/
+
  	isConnected = true;
   pinMode(INT_PIN, INPUT_PULLUP);
 }
@@ -323,7 +340,7 @@ int oldZ=false;
 
 void loop()
 {
-  webSocketClient.loop();
+  webSocketClient1.loop();
   // Get Joystik pos
   wsd.sensor.jx=analogRead(JOYPIN_X);
   wsd.sensor.jy=analogRead(JOYPIN_Y);
@@ -346,8 +363,22 @@ void loop()
     {
       if(isConnected) 
       {
-        webSocketClient.sendBIN(wsd.bytePacket, sizeof(sensorData_t));
+        webSocketClient1.sendBIN(wsd.bytePacket, sizeof(sensorData_t));
+
       }
+
+/*
+      Serial.print(wsd.sensor.quatReal, 2);
+      Serial.print(F(","));
+      Serial.print(wsd.sensor.quatI, 2);
+      Serial.print(F(","));
+      Serial.print(wsd.sensor.quatJ, 2);
+      Serial.print(F(","));
+      Serial.print(wsd.sensor.quatK, 2);
+
+      Serial.println();
+*/
+
       if(isConnected) Serial.print("connected:");
       Serial.print("quatI:");
       Serial.print(wsd.sensor.quatI, 2);
