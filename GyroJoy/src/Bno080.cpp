@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include "Bno080.h"
-
+extern "C" int rom_phy_get_vdd33();
 /*
   Using the BNO080 IMU
   By: Nathan Seidle
@@ -20,6 +20,8 @@
 
 #include <Wire.h>
 #include <SparkFun_BNO080_Arduino_Library.h>
+#include <ESP32Ticker.h>
+#include "mdns.h"
 
 // BNO080
 BNO080 myIMU;
@@ -40,7 +42,11 @@ bool isConnected=false;
 WiFiServer server(SERVER_PORT);
 WebSocketsClient webSocketClient;
 WiFiMulti wfMulti;
+int netw=0;
+char ip_str[20];
 
+Ticker secTimer;
+Ticker minTimer;
 
 
 bool posChanged()
@@ -66,6 +72,21 @@ bool posChanged()
 
   return(pc);
 }
+
+void onMinTimer()
+{
+ /* // https://github.com/espressif/arduino-esp32/issues/2158
+   float internalBatReading;
+   btStart();
+     internalBatReading = rom_phy_get_vdd33();
+     wsd.sensor.power =(float)((internalBatReading*2960)/2798); 
+   btStop();*/
+}
+
+void onSecTimer()
+{
+}
+
 
 
 void hexdump(const void *mem, uint32_t len, uint8_t cols = 16) {
@@ -115,6 +136,10 @@ void webSocketClientEvent(WStype_t type, uint8_t * payload, size_t length) {
 			// send data to server
 			// webSocket.sendBIN(payload, length);
 			break;
+    case WStype_PING:  
+      break;
+    case WStype_PONG:  
+      break;
 		case WStype_ERROR:			
 		case WStype_FRAGMENT_TEXT_START:
 		case WStype_FRAGMENT_BIN_START:
@@ -125,11 +150,130 @@ void webSocketClientEvent(WStype_t type, uint8_t * payload, size_t length) {
 
 }
 
+IPAddress local_IP(192, 168, 43, 10);
+IPAddress gateway(192, 168, 43, 1);
+IPAddress subnet(255, 255, 255, 0);
+
+const char* ssid[] = {"frodocat"};
+const char* password[] = {"gamejam2020"};
+
+WiFiClient espClient;
+
+void resolve_mdns_host(const char * host_name)
+{
+    Serial.printf("Query A: %s.local", host_name);
+
+    struct ip4_addr addr;
+    addr.addr = 0;
+
+    esp_err_t err = mdns_query_a(host_name, 5000,  &addr);
+    if(err){
+        if(err == ESP_ERR_NOT_FOUND){
+            Serial.printf("Host was not found!");
+            return;
+        }
+        Serial.printf("Query Failed");
+        return;
+    }
+
+  sprintf(ip_str, IPSTR, IP2STR(&addr));
+  Serial.printf(IPSTR, IP2STR(&addr));    
+}
+
+void start_mdns_service()
+{
+    //initialize mDNS service
+    esp_err_t err = mdns_init();
+    if (err) {
+        Serial.printf("MDNS Init failed: %d\n", err);
+        return;
+    }
+
+    //set hostname
+    mdns_hostname_set("GyroJoy");
+    //set default instance
+    mdns_instance_name_set("Beat's GyroJoy");
+    Serial.printf("MDNS Started");
+
+}
+
+void setup_wifi() {
+  delay(10);
+  // We start by connecting to a WiFi network
+  int ccount=0;
+  while (WiFi.status() != WL_CONNECTED) 
+  {
+   if(ccount==0)
+   { 
+    WiFi.mode(WIFI_OFF);
+    delay(2000);
+    WiFi.mode(WIFI_STA);
+    // Configures static IP address
+    if (!WiFi.config(local_IP, gateway, subnet)) {
+      Serial.println("STA Failed to configure");
+    }
+    WiFi.begin(ssid[netw], password[netw]);
+   } 
+   Serial.println();
+   Serial.print("Connecting to ");
+   Serial.println(ssid[netw]);
+   delay(500);
+    //Serial.print("w");
+    //Serial.print(F("FreeMemory: "));
+    //Serial.println(System.freeMemory());
+    Serial.println( WiFi.SSID());
+    Serial.println( WiFi.RSSI());
+    if(WiFi.RSSI()!=0) ccount=0;
+    Serial.println( WiFi.localIP());
+    ccount++;
+    if(ccount > 10)
+    {
+      ccount =0;
+      if(netw < 0) 
+      { 
+        netw++; 
+      }
+      else
+      {
+        netw=0; 
+      }
+        WiFi.begin(ssid[netw], password[netw]);
+    }
+  }
+
+  Serial.println("");
+  Serial.println("WiFi connected");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+  start_mdns_service();
+  //resolve_mdns_host("Android");
+  resolve_mdns_host("Hikaru");
+}
+
+void reconnect() {
+  // Loop until we're reconnected
+    Serial.println( WiFi.SSID());
+    Serial.println( WiFi.RSSI());
+    Serial.println( WiFi.localIP());
+}
+
+void gotoSleep()
+{
+  WiFi.disconnect();
+  WiFi.mode(WIFI_OFF);
+  //WiFi.forceSleepBegin();
+  delay(1);
+}
+
 void setup()
 {
   Serial.begin(115200);
+  Serial.println("Setup WiFi");
+  setup_wifi();
   Serial.println();
-  Serial.println("BNO080 Read Example");
+ 
+  secTimer.attach(1, onSecTimer);
+  minTimer.attach(60, onMinTimer);
 
   Wire.begin();
 
@@ -145,28 +289,11 @@ void setup()
   Serial.println(F("Rotation vector enabled"));
   Serial.println(F("Output in form i, j, k, real, accuracy"));
   myIMU.enableActivityClassifier(50, enableActivities, activityConfidences);
-
+  myIMU.enableStabilityClassifier(50);
+  myIMU.enableStepCounter(50);
    // Joystik
   pinMode(JOYPIN_Z, INPUT);
-	Serial.println("Configuring access point...");
-  WiFi.mode(WIFI_AP);
-	//WiFi.softAPConfig(IPAddress(192,168,5,1),IPAddress(192,168,5,1),IPAddress(255,255,255,0));
-  WiFi.softAP(SSID, PASSWORD);
-  //Serial.print("Access point running. IP address: ");
-  //Serial.println(WiFi.softAPIP());
-	Serial.println("Wait 100 ms for AP_START...");
-  delay(100);
-  
-  Serial.println("Set softAPConfig");
-  IPAddress Ip(192, 168, 5, 1);
-  IPAddress NMask(255, 255, 255, 0);
-  WiFi.softAPConfig(Ip, Ip, NMask);
-  
-  IPAddress myIP = WiFi.softAPIP();
-  Serial.print("AP IP address: ");
-  Serial.println(myIP);
-  server.begin();
- 
+	
   Serial.setDebugOutput(true);
 
   Serial.println();
@@ -179,7 +306,7 @@ void setup()
       delay(1000);
   }
 
-	webSocketClient.begin("192.168.5.2", 8989, "/paddle");
+	webSocketClient.begin(ip_str, 8989, "/paddle");
 
 	// event handler
 	webSocketClient.onEvent(webSocketClientEvent);
@@ -212,7 +339,9 @@ void loop()
     wsd.sensor.quatK = myIMU.getQuatK();
     wsd.sensor.quatReal = myIMU.getQuatReal();
     wsd.sensor.mostLikelyActivity = myIMU.getActivityClassifier(); 
-
+    wsd.sensor.stabilityClass = myIMU.getStabilityClassifier();
+    wsd.sensor.steps = myIMU.getStepCount();
+    
     if(posChanged())
     {
       if(isConnected) 
@@ -235,6 +364,9 @@ void loop()
       Serial.print("mla:");
       Serial.print(wsd.sensor.mostLikelyActivity, DEC);
       Serial.print(F(","));
+      Serial.print("stab:");
+      Serial.print(wsd.sensor.stabilityClass, DEC);
+      Serial.print(F(","));
       Serial.print("jx:");
       Serial.print(wsd.sensor.jx, DEC);
       Serial.print(F(","));
@@ -243,7 +375,14 @@ void loop()
       Serial.print(F(","));
       Serial.print("jz:");
       Serial.print(wsd.sensor.jz, DEC);
+      Serial.print(F(","));
+      Serial.print("Steps:");
+      Serial.print(wsd.sensor.steps, DEC);
+      Serial.print(F(","));
+      Serial.print("Power:");
+      Serial.print(wsd.sensor.power, 4);
       Serial.println();
+
     }
   }
  }
