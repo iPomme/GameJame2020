@@ -33,5 +33,17 @@ public class PaddleTracker : MonoBehaviour
         rotation = newPosition;// * Quaternion.Inverse(reference);
         // this.gameObject.transform.localRotation = rotation;
     }
+
+    public void setjoystick(ushort jx, ushort jy, ushort jz)
+    {
+        if (jz == 1)
+        {
+            OVRInput.SetControllerVibration(1, 1, OVRInput.Controller.RTouch);
+        }
+        else
+        {
+            OVRInput.SetControllerVibration(0, 0, OVRInput.Controller.RTouch);
+        }
+    }
 }
 

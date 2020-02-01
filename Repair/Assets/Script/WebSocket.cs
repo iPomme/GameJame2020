@@ -104,8 +104,10 @@ public class WebSocket : MonoBehaviour
             //     qx, qy,
             //     qz, qw, activity, stability, jx, jy, jz, steps, power);
 
-           
+           //https://forums.adafruit.com/viewtopic.php?t=81671
             _tracker.setNewPosition(new Quaternion(-qw, -qy, -qz, qx));
+            _tracker.setjoystick(jx, jy, jz);
+            
             // Debug.LogFormat("Got message from the websocket temperature? '{0}'", BitConverter.ToInt16(buffer,4));
             
         }
