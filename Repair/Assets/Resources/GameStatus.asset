@@ -15,10 +15,10 @@ MonoBehaviour:
   waterLevelSpeed: 1
   waterLevelCheckIntervalInSeconds: 1
   underWaterSecondBeforeGameOver: 4
-  FailureGeneratorIntervalInSecond: 2
+  FailureGeneratorIntervalInSecond: 20
   numberOfHulaToSpawn: 5
   headsetLevel: 1.189
-  waterLevel: 3.1560004
+  waterLevel: 1.5170001
   gameover: 0
   holes:
   - {fileID: 0}
