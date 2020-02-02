@@ -13,6 +13,6 @@ public class waterLEvelTemporary : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.Translate(0, 1 * Time.deltaTime / 50, 0);
+        transform.Translate(0, 1 * Time.deltaTime / 20, 0);
     }
 }
