@@ -6,6 +6,7 @@ using LanguageExt;
 using static LanguageExt.Prelude;
 using Script;
 using UnityEngine;
+using Patch = Script.Patch;
 using Random = UnityEngine.Random;
 
 public class GameHandling : MonoBehaviour
@@ -84,6 +85,7 @@ public class GameHandling : MonoBehaviour
         try
         {
             var newPatch = Instantiate(PatchPrefab, TheChair.transform);
+            newPatch.GetComponentInChildren<Script.Patch>().SetGameHandling(this.gameObject);
             newPatch.GetComponentInChildren<Rigidbody>().AddForce(transform.forward * _thrust);
             _currentPatch = newPatch;
         }
@@ -252,4 +254,11 @@ public class GameHandling : MonoBehaviour
     }
 
     #endregion
+
+    public void PatchMatched()
+    {
+        Debug.Log("Patch matched, destroy it .....");
+        _currentPatch.IfSome(p => Destroy(p));
+        _currentPatch = Option<GameObject>.None;
+    }
 }
