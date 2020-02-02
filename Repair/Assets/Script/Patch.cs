@@ -29,8 +29,8 @@ namespace Script
         void OnCollisionEnter(Collision collision)
         {
             Debug.LogFormat("Collider ({0}) tag ({1}) trigered ...",collision.gameObject.name,collision.gameObject.tag);
-            if (collision.gameObject.tag == "Shape1")
-                _game.PatchMatched();
+            if (collision.gameObject.tag == "Shape1") Debug.Log("Collision");
+                // _game.PatchMatched();
         }
     }
 }

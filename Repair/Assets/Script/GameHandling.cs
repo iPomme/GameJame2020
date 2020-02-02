@@ -87,7 +87,7 @@ public class GameHandling : MonoBehaviour
         Debug.Log("Create a new Instance of the prefab");
         try
         {
-            var newPatch = Instantiate(PatchPrefab, Spawner.transform);
+            var newPatch = Instantiate(PatchPrefab);
             newPatch.GetComponentInChildren<Script.Patch>().SetGameHandling(this.gameObject);
             // newPatch.GetComponentInChildren<Rigidbody>().AddForce(transform.forward * _thrust);
             _currentPatch = newPatch;
@@ -222,6 +222,8 @@ public class GameHandling : MonoBehaviour
         {
             yield return new WaitForSeconds(gs.FailureGeneratorIntervalInSecond);
             Debug.LogFormat("Let's Break some Holes....");
+            // UnityThread.executeInUpdate(() => createNewPatch());
+            GenerateAverage();
         }
     }
 
