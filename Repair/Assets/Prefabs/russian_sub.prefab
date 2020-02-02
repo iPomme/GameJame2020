@@ -103,7 +103,7 @@ GameObject:
   - component: {fileID: 7412152253061664105}
   - component: {fileID: 4234246181825133349}
   m_Layer: 0
-  m_Name: Point Light BLUE (2)
+  m_Name: Point Light RED alert
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -117,7 +117,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6995630452952246149}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.016, y: 1.531, z: -0.037}
+  m_LocalPosition: {x: -1.46, y: 1.531, z: -0.037}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8864791485694232647}
@@ -134,7 +134,7 @@ Light:
   serializedVersion: 10
   m_Type: 2
   m_Shape: 0
-  m_Color: {r: 0.35826805, g: 0.8429142, b: 0.9150943, a: 1}
+  m_Color: {r: 0.9528302, g: 0.09438412, b: 0.12699288, a: 1}
   m_Intensity: 4.5
   m_Range: 2.99
   m_SpotAngle: 30
@@ -195,7 +195,7 @@ GameObject:
   - component: {fileID: 8864791484303602887}
   - component: {fileID: 8864791484303602884}
   m_Layer: 0
-  m_Name: Point Light RED
+  m_Name: Point Light RED alert
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -287,7 +287,7 @@ GameObject:
   - component: {fileID: 8864791484479096193}
   - component: {fileID: 8864791484479096192}
   m_Layer: 0
-  m_Name: Point Light BLUE (1)
+  m_Name: Point Light YELLOW
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -410,7 +410,7 @@ Light:
   serializedVersion: 10
   m_Type: 2
   m_Shape: 0
-  m_Color: {r: 0, g: 0.7882353, b: 0.93333334, a: 1}
+  m_Color: {r: 0.93333334, g: 0.053679496, b: 0, a: 1}
   m_Intensity: 1
   m_Range: 4.16
   m_SpotAngle: 30
@@ -512,7 +512,7 @@ Animator:
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
-  m_WarningMessage:
+  m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
