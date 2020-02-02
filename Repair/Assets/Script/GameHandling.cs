@@ -1,6 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Linq;
 using DefaultNamespace;
+using LanguageExt;
+using static LanguageExt.Prelude;
+using Script;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -14,9 +18,17 @@ public class GameHandling : MonoBehaviour
 
     public GameObject[] goupilles;
 
+    public GameObject PatchPrefab;
+
+    public GameObject TheChair;
+
     private Renderer _invertedSphereRenderer;
 
     private Color _originalColor;
+
+    private Option<GameObject> _currentPatch = Option<GameObject>.None;
+    
+    private float _thrust = 1f;
 
     void Start()
     {
@@ -57,6 +69,30 @@ public class GameHandling : MonoBehaviour
         }
     }
 
+    public void spawnAPatch()
+    {
+        // _currentPatch.Filter(x => !x.GetComponent<Script.Patch>().isGrabbed())
+        //     .Map(x => x.GetComponent<Script.Patch>().ChangeShape());
+
+        Debug.LogFormat("The current patch exists:  {0}",_currentPatch.IsNone);
+       _currentPatch.IfNone(() => UnityThread.executeInUpdate(() => createNewPatch()));
+    }
+
+    private void createNewPatch()
+    {
+        Debug.Log("Create a new Instance of the prefab");
+        try
+        {
+            var newPatch = Instantiate(PatchPrefab, TheChair.transform);
+            newPatch.GetComponentInChildren<Rigidbody>().AddForce(transform.forward * _thrust);
+            _currentPatch = newPatch;
+        }
+        catch (Exception e)
+        {
+            Debug.LogFormat("Cannot create an instance of the prefab : {0}",e.Message);
+        }
+        
+    }
 
     /**
      * This is gameover, close everything and stop everything
@@ -117,10 +153,10 @@ public class GameHandling : MonoBehaviour
             if (Random.Range(0f, 1f) > .7f)
             {
                 ecoutille.GetComponent<Ecoutille>().brokeIt();
-            }    
+            }
         }
     }
-    
+
     /*
      * Get the number of broken holes
      */
@@ -144,6 +180,7 @@ public class GameHandling : MonoBehaviour
     private Coroutine _waterLevelCoroutine;
     private Coroutine _failureGeneratorCoroutine;
     private Coroutine _initialAverageCoroutine;
+    
 
 
     /**
@@ -165,9 +202,9 @@ public class GameHandling : MonoBehaviour
         for (;;)
         {
             yield return new WaitForSeconds(gs.waterLevelCheckIntervalInSeconds);
-            Debug.LogFormat("WATER LEVEL: {0}", gs.waterLevel);
+            // Debug.LogFormat("WATER LEVEL: {0}", gs.waterLevel);
             var transformPosition = waterLevel.transform.position;
-            
+
             transformPosition.y = transformPosition.y + gs.waterLevelSpeed * NumberOfBrokenHole() * .001f;
             waterLevel.transform.position = transformPosition;
         }

@@ -628,6 +628,9 @@ MonoBehaviour:
   - {fileID: 789567368}
   - {fileID: 215531489}
   - {fileID: 1609498364}
+  PatchPrefab: {fileID: 386292252906347141, guid: 4f86213712cad45a0994c2266ba19c77,
+    type: 3}
+  TheChair: {fileID: 882235358}
 --- !u!4 &244646774
 Transform:
   m_ObjectHideFlags: 0
@@ -2375,6 +2378,7 @@ MonoBehaviour:
   port: 8989
   paddleTracker: {fileID: 1363990992}
   gs: {fileID: 11400000, guid: 6b8c48259ae494132a5fa8c75a030831, type: 2}
+  gameHandling: {fileID: 244646773}
 --- !u!1001 &1519158316
 PrefabInstance:
   m_ObjectHideFlags: 0
