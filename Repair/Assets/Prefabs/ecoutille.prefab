@@ -4782,6 +4782,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2871126054257823135}
+  - component: {fileID: 7269880303516633093}
   m_Layer: 0
   m_Name: ecoutille
   m_TagString: Untagged
@@ -4798,13 +4799,25 @@ Transform:
   m_GameObject: {fileID: 8513197629040105440}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.47036397, y: 2.776202, z: -0.9204977}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children:
   - {fileID: 2905748525298249087}
   - {fileID: 1287418850714743414}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7269880303516633093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8513197629040105440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c76ae1a6f4e7542979432a33ed0d245f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &7866097697443137125
 PrefabInstance:
   m_ObjectHideFlags: 0

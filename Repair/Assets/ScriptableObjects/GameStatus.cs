@@ -7,15 +7,14 @@ namespace DefaultNamespace
     [UnityEngine.CreateAssetMenu(fileName = "GameStatus", menuName = "Repair/GameStatus", order = 0)]
     public class GameStatus : UnityEngine.ScriptableObject
     {
-        [Header("Global configuration")] 
-        public int waterLevelSpeed;
+        [Header("Global configuration")] public int waterLevelSpeed;
         public int waterLevelCheckIntervalInSeconds;
         public int underWaterSecondBeforeGameOver;
 
         public int FailureGeneratorIntervalInSecond;
 
         public int numberOfHulaToSpawn;
-        
+
         [Header("Game Status")] public float headsetLevel;
         public float waterLevel;
         public bool gameover;
@@ -26,7 +25,6 @@ namespace DefaultNamespace
         {
             foreach (GameObject hole in holes)
             {
-                
             }
         }
     }
@@ -51,8 +49,8 @@ namespace DefaultNamespace
 
     public enum HoleShape
     {
-        ONE,
-        TWO,
-        THRE
+        ONE = 0,
+        TWO = 1,
+        THRE = 2
     }
 }
