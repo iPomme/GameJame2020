@@ -10,6 +10,7 @@ namespace DefaultNamespace
         [Header("Global configuration")] 
         public int waterLevelSpeed;
         public int waterLevelCheckIntervalInSeconds;
+        public int underWaterSecondBeforeGameOver;
 
         public int FailureGeneratorIntervalInSecond;
 

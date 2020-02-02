@@ -19,27 +19,6 @@ public class GameHandlingEditor : Editor
         {
             gs.restartGame();
         }
-//
-//        GUILayout.Space(20);
-//        EditorGUILayout.LabelField(
-//            akkaSystem.isSystemInstanciated() ? "System Instantiated" : "System NOT Instantiated");
-//        GUILayout.Space(20);
-//        EditorGUILayout.LabelField(akkaSystem.getSystemInfo(),GUILayout.Height(100));
-//        GUILayout.Space(50);
-//
-//        if (GUILayout.Button("Get actors defined",buttonOption))
-//        {
-//            var children = akkaSystem.getSystemChlidren();
-//            if (children.Count == 0)
-//            {
-//                EditorUtility.DisplayDialog("List Of Actors", "No Actors defined yet", "OK");
-//            }
-//            else
-//            {
-//                EditorUtility.DisplayDialog("List Of Actors", children.Aggregate((a, b) => $"{a}\n{b}"), "OK");
-//            }
-//            
-//        }
     }
 }
 #endif
