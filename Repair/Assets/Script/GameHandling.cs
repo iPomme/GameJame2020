@@ -23,12 +23,14 @@ public class GameHandling : MonoBehaviour
 
     public GameObject TheChair;
 
+    public GameObject Spawner;
+    
     private Renderer _invertedSphereRenderer;
 
     private Color _originalColor;
 
     private Option<GameObject> _currentPatch = Option<GameObject>.None;
-    
+
     private float _thrust = 1f;
 
     void Start()
@@ -75,8 +77,9 @@ public class GameHandling : MonoBehaviour
         // _currentPatch.Filter(x => !x.GetComponent<Script.Patch>().isGrabbed())
         //     .Map(x => x.GetComponent<Script.Patch>().ChangeShape());
 
-        Debug.LogFormat("The current patch exists:  {0}",_currentPatch.IsNone);
-       _currentPatch.IfNone(() => UnityThread.executeInUpdate(() => createNewPatch()));
+        Debug.LogFormat("The current patch exists:  {0}", _currentPatch.IsNone);
+        // _currentPatch.IfNone(() => UnityThread.executeInUpdate(() => createNewPatch()));
+        UnityThread.executeInUpdate(() => createNewPatch());
     }
 
     private void createNewPatch()
@@ -84,16 +87,15 @@ public class GameHandling : MonoBehaviour
         Debug.Log("Create a new Instance of the prefab");
         try
         {
-            var newPatch = Instantiate(PatchPrefab, TheChair.transform);
+            var newPatch = Instantiate(PatchPrefab, Spawner.transform);
             newPatch.GetComponentInChildren<Script.Patch>().SetGameHandling(this.gameObject);
-            newPatch.GetComponentInChildren<Rigidbody>().AddForce(transform.forward * _thrust);
+            // newPatch.GetComponentInChildren<Rigidbody>().AddForce(transform.forward * _thrust);
             _currentPatch = newPatch;
         }
         catch (Exception e)
         {
-            Debug.LogFormat("Cannot create an instance of the prefab : {0}",e.Message);
+            Debug.LogFormat("Cannot create an instance of the prefab : {0}", e.Message);
         }
-        
     }
 
     /**
@@ -182,7 +184,6 @@ public class GameHandling : MonoBehaviour
     private Coroutine _waterLevelCoroutine;
     private Coroutine _failureGeneratorCoroutine;
     private Coroutine _initialAverageCoroutine;
-    
 
 
     /**

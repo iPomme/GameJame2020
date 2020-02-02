@@ -29,7 +29,7 @@ namespace Script
         void OnCollisionEnter(Collision collision)
         {
             Debug.LogFormat("Collider ({0}) tag ({1}) trigered ...",collision.gameObject.name,collision.gameObject.tag);
-            if (collision.gameObject.name == "particleKiller")
+            if (collision.gameObject.tag == "Shape1")
                 _game.PatchMatched();
         }
     }

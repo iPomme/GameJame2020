@@ -13,11 +13,17 @@ public class GameHandlingEditor : Editor
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
-        GameHandling gs = (GameHandling)target;
+        GameHandling gs = (GameHandling) target;
         GUILayout.Space(20);
-        if (GUILayout.Button("Restart Game",buttonOption))
+        if (GUILayout.Button("Restart Game", buttonOption))
         {
             gs.RestartGame();
+        }
+
+        GUILayout.Space(20);
+        if (GUILayout.Button("Spwan Patch", buttonOption))
+        {
+            gs.spawnAPatch();
         }
     }
 }
