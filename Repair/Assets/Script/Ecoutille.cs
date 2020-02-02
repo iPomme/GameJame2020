@@ -39,6 +39,11 @@ public class Ecoutille : MonoBehaviour
         particleEmission.enabled = false;
     }
 
+    public bool isBroken()
+    {
+        return hole.Status == HoleStatus.BROKEN;
+    }
+
     // Start is called before the first frame update
     void Start()
     {

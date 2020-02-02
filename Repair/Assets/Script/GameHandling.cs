@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
+using System.Linq;
 using DefaultNamespace;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -15,18 +14,18 @@ public class GameHandling : MonoBehaviour
 
     public GameObject[] goupilles;
 
-    private Renderer invertedSphereRenderer;
+    private Renderer _invertedSphereRenderer;
 
     private Color _originalColor;
 
     void Start()
     {
-        invertedSphereRenderer = invertedSphere.GetComponentInChildren<Renderer>();
+        _invertedSphereRenderer = invertedSphere.GetComponentInChildren<Renderer>();
         // Get the initial color of the inversed sphere.
-        hideInvertedSphere();
-        _originalColor = invertedSphereRenderer.material.color;
+        HideInvertedSphere();
+        _originalColor = _invertedSphereRenderer.material.color;
 
-        restartGame();
+        RestartGame();
         Debug.Log("GameHandling Started.");
     }
 
@@ -38,7 +37,7 @@ public class GameHandling : MonoBehaviour
             if (_fadeCoroutine == null)
                 _fadeCoroutine = StartCoroutine(Fade());
             if (_gameoverCoroutine == null)
-                _gameoverCoroutine = StartCoroutine(gameOverControl());
+                _gameoverCoroutine = StartCoroutine(GameOverControl());
         }
         else
         {
@@ -54,7 +53,7 @@ public class GameHandling : MonoBehaviour
                 _gameoverCoroutine = null;
             }
 
-            hideInvertedSphere();
+            HideInvertedSphere();
         }
     }
 
@@ -62,37 +61,38 @@ public class GameHandling : MonoBehaviour
     /**
      * This is gameover, close everything and stop everything
      */
-    private void applyGameOver()
+    private void ApplyGameOver()
     {
         Debug.Log("GameOver");
         gs.gameover = true;
         if (_waterLevelCoroutine != null) StopCoroutine(_waterLevelCoroutine);
         if (_failureGeneratorCoroutine != null) StopCoroutine(_failureGeneratorCoroutine);
-        invertedSphereRenderer.material.color = new Color(0, 0, 0, 1f);
-        invertedSphereRenderer.material.DisableKeyword("_EMISSION");
+        _invertedSphereRenderer.material.color = new Color(0, 0, 0, 1f);
+        _invertedSphereRenderer.material.DisableKeyword("_EMISSION");
     }
 
     /**
      * A new game is starting setup everything and let's play...
      */
-    public void restartGame()
+    public void RestartGame()
     {
         waterLevel.transform.position = Vector3.zero;
-        invertedSphereRenderer.material.color = _originalColor;
-        hideInvertedSphere();
-        _waterLevelCoroutine = StartCoroutine(waterLevelControl());
-        _failureGeneratorCoroutine = StartCoroutine(failureGeneratorControl());
-        _initialAverageCoroutine = StartCoroutine(initalAvarage());
+        _invertedSphereRenderer.material.color = _originalColor;
+        HideInvertedSphere();
+        _waterLevelCoroutine = StartCoroutine(WaterLevelControl());
+        _failureGeneratorCoroutine = StartCoroutine(FailureGeneratorControl());
+        _initialAverageCoroutine = StartCoroutine(InitalAvarage());
         if (_gameoverCoroutine != null) StopCoroutine(_gameoverCoroutine);
         _gameoverCoroutine = null;
         gs.gameover = false;
     }
 
-    private void hideInvertedSphere()
+    private void HideInvertedSphere()
     {
-        invertedSphereRenderer.material.color = new Color(invertedSphereRenderer.material.color.r,
-            invertedSphereRenderer.material.color.g, invertedSphereRenderer.material.color.b, 0f);
-        invertedSphereRenderer.enabled = false;
+        var material = _invertedSphereRenderer.material;
+        material.color = new Color(material.color.r,
+            material.color.g, material.color.b, 0f);
+        _invertedSphereRenderer.enabled = false;
     }
 
     private void crash()
@@ -100,7 +100,7 @@ public class GameHandling : MonoBehaviour
         Debug.Log("Crash!!...");
     }
 
-    private void fixAllHoles()
+    private void FixAllHoles()
     {
         Debug.Log("FixHoles...");
         foreach (GameObject ecoutille in goupilles)
@@ -109,7 +109,7 @@ public class GameHandling : MonoBehaviour
         }
     }
 
-    private void generateAverage()
+    private void GenerateAverage()
     {
         Debug.Log("Generate Average...");
         foreach (GameObject ecoutille in goupilles)
@@ -119,6 +119,14 @@ public class GameHandling : MonoBehaviour
                 ecoutille.GetComponent<Ecoutille>().brokeIt();
             }    
         }
+    }
+    
+    /*
+     * Get the number of broken holes
+     */
+    private int NumberOfBrokenHole()
+    {
+        return goupilles.Where(x => x.GetComponent<Ecoutille>().isBroken()).Count();
     }
 
     /**
@@ -141,30 +149,34 @@ public class GameHandling : MonoBehaviour
     /**
      * Generate the initial average
      */
-    private IEnumerator initalAvarage()
+    private IEnumerator InitalAvarage()
     {
         yield return new WaitForSeconds(4f);
         crash();
-        fixAllHoles();
-        generateAverage();
+        FixAllHoles();
+        GenerateAverage();
     }
 
     /**
      * Control the level of the water depending the number of active holes
     */
-    private IEnumerator waterLevelControl()
+    private IEnumerator WaterLevelControl()
     {
         for (;;)
         {
             yield return new WaitForSeconds(gs.waterLevelCheckIntervalInSeconds);
             Debug.LogFormat("WATER LEVEL: {0}", gs.waterLevel);
+            var transformPosition = waterLevel.transform.position;
+            
+            transformPosition.y = transformPosition.y + gs.waterLevelSpeed * NumberOfBrokenHole() * .001f;
+            waterLevel.transform.position = transformPosition;
         }
     }
 
     /**
      * Create failure randomly
      */
-    private IEnumerator failureGeneratorControl()
+    private IEnumerator FailureGeneratorControl()
     {
         for (;;)
         {
@@ -176,7 +188,7 @@ public class GameHandling : MonoBehaviour
     /**
      * Control the time allowed underwater, once reached, it's gameover, that's life!
      */
-    private IEnumerator gameOverControl()
+    private IEnumerator GameOverControl()
     {
         for (int i = 0; i < gs.underWaterSecondBeforeGameOver * 10; i++)
         {
@@ -185,18 +197,19 @@ public class GameHandling : MonoBehaviour
         }
 
         Debug.Log("APPLY GAMEOVER");
-        applyGameOver();
+        ApplyGameOver();
     }
 
     IEnumerator Fade()
     {
-        invertedSphereRenderer.enabled = true;
+        _invertedSphereRenderer.enabled = true;
 
         for (float ft = 0f; ft <= 1; ft += 0.1f)
         {
-            Color c = invertedSphereRenderer.material.color;
+            var material = _invertedSphereRenderer.material;
+            Color c = material.color;
             c.a = ft;
-            invertedSphereRenderer.material.color = c;
+            material.color = c;
             yield return new WaitForSeconds(.1f);
         }
     }

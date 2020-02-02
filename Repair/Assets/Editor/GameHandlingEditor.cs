@@ -17,7 +17,7 @@ public class GameHandlingEditor : Editor
         GUILayout.Space(20);
         if (GUILayout.Button("Restart Game",buttonOption))
         {
-            gs.restartGame();
+            gs.RestartGame();
         }
     }
 }

@@ -18,7 +18,7 @@ MonoBehaviour:
   FailureGeneratorIntervalInSecond: 2
   numberOfHulaToSpawn: 5
   headsetLevel: 1.189
-  waterLevel: 0
+  waterLevel: 3.1560004
   gameover: 0
   holes:
   - {fileID: 0}
