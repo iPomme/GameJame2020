@@ -8,6 +8,7 @@ public class Ecoutille : MonoBehaviour
     private Hole hole;
     private Animator _animator;
     private ParticleSystem _particle;
+    private AudioSource _audio;
 
 
     public HoleShape getShape()
@@ -24,6 +25,7 @@ public class Ecoutille : MonoBehaviour
     {
         hole.Status = HoleStatus.BROKEN;
         _animator.SetBool("isLeaking", true);
+        _audio.Play();
         var particleEmission = _particle.emission;
         particleEmission.enabled = true;
     }
@@ -32,6 +34,7 @@ public class Ecoutille : MonoBehaviour
     {
         hole.Status = HoleStatus.FIXED;
         _animator.SetBool("isLeaking", false);
+        _audio.Stop();
         var particleEmission = _particle.emission;
         particleEmission.enabled = false;
     }
@@ -42,6 +45,7 @@ public class Ecoutille : MonoBehaviour
         hole = new Hole(HoleStatus.FIXED, (HoleShape) Random.Range(0, 2));
         _animator = GetComponentInChildren<Animator>();
         _particle = GetComponentInChildren<ParticleSystem>();
+        _audio = GetComponentInChildren<AudioSource>();
     }
 
     // Update is called once per frame
