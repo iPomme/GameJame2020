@@ -13,6 +13,9 @@ public class WebSocket : MonoBehaviour
     public GameObject paddleTracker;
 
     public  GameStatus gs;
+
+    public GameHandling gameHandling;
+    
     // Start is called before the first frame update
     private WebSocketServer wssv;
     private string temperature;
@@ -29,7 +32,7 @@ public class WebSocket : MonoBehaviour
         wssv = new WebSocketServer(port);
 
         PaddleWsHnd = new PaddleWSHandler(paddleTracker);
-        HulaWsHnd = new HulaWSHandler(paddleTracker, gs);
+        HulaWsHnd = new HulaWSHandler(gameHandling, gs);
         wssv.AddWebSocketService<PaddleWSHandler>("/paddle", () => PaddleWsHnd);
         wssv.AddWebSocketService<HulaWSHandler>("/corona", () => HulaWsHnd);
 
@@ -40,13 +43,14 @@ public class WebSocket : MonoBehaviour
     
     private class HulaWSHandler : WebSocketBehavior
     {
-        private PaddleTracker _tracker;
         private GameStatus _gameStatus;
 
         private int _lastHulaCount = 0;
-        public HulaWSHandler(GameObject tracker, GameStatus gameStatus)
+        private GameHandling _gameHandling;
+
+        public HulaWSHandler(GameHandling gameHandling, GameStatus gameStatus)
         {
-            _tracker = tracker.GetComponent<PaddleTracker>();
+            _gameHandling = gameHandling;
             _gameStatus = gameStatus;
         }
          protected override void OnClose(CloseEventArgs e)
@@ -57,7 +61,7 @@ public class WebSocket : MonoBehaviour
 
         protected override void OnError(ErrorEventArgs e)
         {
-            Debug.LogFormat("OnError({0})", e);
+            Debug.LogFormat("OnError({0})", e.Message);
             base.OnError(e);
         }
 
@@ -78,13 +82,14 @@ public class WebSocket : MonoBehaviour
             int currentHulaCount = Convert.ToInt32(hula_count);
             
              Debug.LogFormat(
-                  "Got message from the websocket \n hula_s:'{0}' hula_d:'{1}' hula_c:'{2}'",
-                  hula_speed,hula_diameter,currentHulaCount);
+                  "Got message from the websocket \n hula_s:'{0}' hula_d:'{1}' hula_c:'{2}'/n lastValue: '{3}'",
+                  hula_speed,hula_diameter,currentHulaCount,_lastHulaCount);
 
-             if (currentHulaCount != _lastHulaCount && currentHulaCount % _gameStatus.numberOfHulaToSpawn == 0)
+             if (currentHulaCount != _lastHulaCount && (currentHulaCount % _gameStatus.numberOfHulaToSpawn == 0))
              {
                  Debug.Log("Spawn an object...");
                  _lastHulaCount = currentHulaCount;
+                 _gameHandling.spawnAPatch();
              }
 
         }
