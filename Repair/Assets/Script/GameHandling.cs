@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DefaultNamespace;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class GameHandling : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class GameHandling : MonoBehaviour
 
     public GameObject waterLevel;
 
+    public GameObject[] goupilles;
+
     private Renderer invertedSphereRenderer;
 
     private Color _originalColor;
@@ -19,8 +22,11 @@ public class GameHandling : MonoBehaviour
     void Start()
     {
         invertedSphereRenderer = invertedSphere.GetComponentInChildren<Renderer>();
+        // Get the initial color of the inversed sphere.
         hideInvertedSphere();
         _originalColor = invertedSphereRenderer.material.color;
+
+        restartGame();
         Debug.Log("GameHandling Started.");
     }
 
@@ -31,7 +37,7 @@ public class GameHandling : MonoBehaviour
         {
             if (_fadeCoroutine == null)
                 _fadeCoroutine = StartCoroutine(Fade());
-            if (_gameoverCoroutine == null) 
+            if (_gameoverCoroutine == null)
                 _gameoverCoroutine = StartCoroutine(gameOverControl());
         }
         else
@@ -76,7 +82,8 @@ public class GameHandling : MonoBehaviour
         hideInvertedSphere();
         _waterLevelCoroutine = StartCoroutine(waterLevelControl());
         _failureGeneratorCoroutine = StartCoroutine(failureGeneratorControl());
-        if(_gameoverCoroutine != null) StopCoroutine(_gameoverCoroutine);
+        _initialAverageCoroutine = StartCoroutine(initalAvarage());
+        if (_gameoverCoroutine != null) StopCoroutine(_gameoverCoroutine);
         _gameoverCoroutine = null;
         gs.gameover = false;
     }
@@ -86,6 +93,32 @@ public class GameHandling : MonoBehaviour
         invertedSphereRenderer.material.color = new Color(invertedSphereRenderer.material.color.r,
             invertedSphereRenderer.material.color.g, invertedSphereRenderer.material.color.b, 0f);
         invertedSphereRenderer.enabled = false;
+    }
+
+    private void crash()
+    {
+        Debug.Log("Crash!!...");
+    }
+
+    private void fixAllHoles()
+    {
+        Debug.Log("FixHoles...");
+        foreach (GameObject ecoutille in goupilles)
+        {
+            ecoutille.GetComponent<Ecoutille>().fixIt();
+        }
+    }
+
+    private void generateAverage()
+    {
+        Debug.Log("Generate Average...");
+        foreach (GameObject ecoutille in goupilles)
+        {
+            if (Random.Range(0f, 1f) > .7f)
+            {
+                ecoutille.GetComponent<Ecoutille>().brokeIt();
+            }    
+        }
     }
 
     /**
@@ -102,6 +135,19 @@ public class GameHandling : MonoBehaviour
     private Coroutine _gameoverCoroutine;
     private Coroutine _waterLevelCoroutine;
     private Coroutine _failureGeneratorCoroutine;
+    private Coroutine _initialAverageCoroutine;
+
+
+    /**
+     * Generate the initial average
+     */
+    private IEnumerator initalAvarage()
+    {
+        yield return new WaitForSeconds(4f);
+        crash();
+        fixAllHoles();
+        generateAverage();
+    }
 
     /**
      * Control the level of the water depending the number of active holes
@@ -134,9 +180,10 @@ public class GameHandling : MonoBehaviour
     {
         for (int i = 0; i < gs.underWaterSecondBeforeGameOver * 10; i++)
         {
-            Debug.LogFormat("GameOver: iter({0})",i);
+            Debug.LogFormat("GameOver: iter({0})", i);
             yield return new WaitForSeconds(.1f);
         }
+
         Debug.Log("APPLY GAMEOVER");
         applyGameOver();
     }
