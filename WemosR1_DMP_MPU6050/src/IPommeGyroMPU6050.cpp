@@ -438,9 +438,10 @@ void setup()
   }
 
   //resolve_mdns_host("Hikaru");
-  //resolve_mdns_host("Android");
-  resolve_mdns_host("FRODO");
-	webSocketClient1.begin(ip_str, 8989, "/corona");
+  //resolve_mdns_host("android-51a93c0b018d06a5");
+  //resolve_mdns_host("FRODO");
+	//webSocketClient1.begin(ip_str, 8989, "/corona");
+	webSocketClient1.begin("192.168.43.234", 8989, "/corona");
 
 	// event handler
 	webSocketClient1.onEvent(webSocketClientEvent);

@@ -8,7 +8,7 @@ public class WaterLevel : MonoBehaviour
 
     
     public GameStatus gs;
-
+/*
     private OVRCameraRig rig;
     // Start is called before the first frame update
     void Start()
@@ -22,4 +22,5 @@ public class WaterLevel : MonoBehaviour
         gs.waterLevel = transform.position.y;
         gs.headsetLevel = rig.centerEyeAnchor.position.y;
     }
+    */
 }
