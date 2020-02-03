@@ -4,6 +4,9 @@ using UnityEngine.InputSystem;
 
 public class CameraMovement : MonoBehaviour
 {
+    public float speed = 550f;
+    private Vector3 inputDirection;
+    private Vector3 movment;
     
     PlayerInputActions inputAction;
     
@@ -27,12 +30,14 @@ public class CameraMovement : MonoBehaviour
     }
 
     // Update is called once per frame
-    public float speed = 5.0f;
+ 
     void Update()
     {
         
-        Vector3 pos = new Vector3(lookPosition.x,0,lookPosition.y);
-        transform.position = pos;
+        Vector3 targetInput = new Vector3(lookPosition.x,0,lookPosition.y);
+        inputDirection = Vector3.Lerp(inputDirection,targetInput,Time.deltaTime*speed);
+        //transform.position = inputDirection;
+        transform.position += inputDirection;
     }
 
     private void OnEnable()
