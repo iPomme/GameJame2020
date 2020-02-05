@@ -84,10 +84,12 @@ public class GameHandling : MonoBehaviour
 
     private void createNewPatch()
     {
+        if (_currentPatch.IsSome) return;
+        
         Debug.Log("Create a new Instance of the prefab");
         try
         {
-            var newPatch = Instantiate(PatchPrefab);
+            var newPatch = Instantiate(PatchPrefab, Spawner.transform);
             newPatch.GetComponentInChildren<Script.Patch>().SetGameHandling(this.gameObject);
             // newPatch.GetComponentInChildren<Rigidbody>().AddForce(transform.forward * _thrust);
             _currentPatch = newPatch;
@@ -117,7 +119,7 @@ public class GameHandling : MonoBehaviour
     public void RestartGame()
     {
         waterLevel.transform.position = Vector3.zero;
-        _invertedSphereRenderer.material.color = _originalColor;
+        if (_invertedSphereRenderer != null) _invertedSphereRenderer.material.color = _originalColor;
         HideInvertedSphere();
         _waterLevelCoroutine = StartCoroutine(WaterLevelControl());
         _failureGeneratorCoroutine = StartCoroutine(FailureGeneratorControl());
@@ -129,6 +131,7 @@ public class GameHandling : MonoBehaviour
 
     private void HideInvertedSphere()
     {
+        if (_invertedSphereRenderer == null) return;
         var material = _invertedSphereRenderer.material;
         material.color = new Color(material.color.r,
             material.color.g, material.color.b, 0f);
@@ -138,6 +141,7 @@ public class GameHandling : MonoBehaviour
     private void crash()
     {
         Debug.Log("Crash!!...");
+        _PatchSpanerCoroutine = StartCoroutine(PatchSpawner());
     }
 
     private void FixAllHoles()
@@ -184,6 +188,7 @@ public class GameHandling : MonoBehaviour
     private Coroutine _waterLevelCoroutine;
     private Coroutine _failureGeneratorCoroutine;
     private Coroutine _initialAverageCoroutine;
+    private Coroutine _PatchSpanerCoroutine;
 
 
     /**
@@ -212,6 +217,15 @@ public class GameHandling : MonoBehaviour
             waterLevel.transform.position = transformPosition;
         }
     }
+    
+    private IEnumerator PatchSpawner()
+    {
+        for (;;)
+        {
+            yield return new WaitForSeconds(1);
+            UnityThread.executeInUpdate(() => createNewPatch());
+        }
+    }
 
     /**
      * Create failure randomly
@@ -222,7 +236,6 @@ public class GameHandling : MonoBehaviour
         {
             yield return new WaitForSeconds(gs.FailureGeneratorIntervalInSecond);
             Debug.LogFormat("Let's Break some Holes....");
-            // UnityThread.executeInUpdate(() => createNewPatch());
             GenerateAverage();
         }
     }
@@ -244,6 +257,7 @@ public class GameHandling : MonoBehaviour
 
     IEnumerator Fade()
     {
+        if (_invertedSphereRenderer == null) yield break;
         _invertedSphereRenderer.enabled = true;
 
         for (float ft = 0f; ft <= 1; ft += 0.1f)
@@ -258,10 +272,11 @@ public class GameHandling : MonoBehaviour
 
     #endregion
 
-    public void PatchMatched()
+    public void PatchMatched(Ecoutille ecoutille)
     {
-        Debug.Log("Patch matched, destroy it .....");
+        Debug.Log("Patch matched, fix the ecoutille and destroy the path .....");
         _currentPatch.IfSome(p => Destroy(p));
         _currentPatch = Option<GameObject>.None;
+        ecoutille.fixIt();
     }
 }

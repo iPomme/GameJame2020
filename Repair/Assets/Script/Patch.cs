@@ -26,11 +26,23 @@ namespace Script
             return this.gameObject;
         }
 
+        private void OnTriggerEnter(Collider other)
+        {
+            Ecoutille ecoutille = other.gameObject.GetComponentInParent<Ecoutille>();
+            Debug.LogFormat("OnTriggerEnter ({0}) tag ({1}) trigered ...", other.gameObject.name, other.gameObject.tag);
+            if (other.gameObject.tag == "Shape1")
+            {
+                Debug.Log("DESTROY");
+                _game.PatchMatched(ecoutille);
+            }
+        }
+
         void OnCollisionEnter(Collision collision)
         {
-            Debug.LogFormat("Collider ({0}) tag ({1}) trigered ...",collision.gameObject.name,collision.gameObject.tag);
+            Debug.LogFormat("Collider ({0}) tag ({1}) trigered ...", collision.gameObject.name,
+                collision.gameObject.tag);
             if (collision.gameObject.tag == "Shape1") Debug.Log("Collision");
-                // _game.PatchMatched();
+            // _game.PatchMatched();
         }
     }
 }

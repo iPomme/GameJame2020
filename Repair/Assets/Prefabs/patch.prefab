@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6247804118427360688}
   - component: {fileID: 6510627130561862031}
   - component: {fileID: 258095715863017075}
+  - component: {fileID: -7193104267745582690}
   m_Layer: 0
   m_Name: patch
   m_TagString: Untagged
@@ -80,6 +81,18 @@ MonoBehaviour:
   m_snapOrientation: 0
   m_snapOffset: {fileID: 0}
   m_grabPoints: []
+--- !u!114 &-7193104267745582690
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 386292252906347141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5840920ba30d4bc9b97aea519d20c15e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &6924713774274346776
 MonoBehaviour:
   m_ObjectHideFlags: 0
