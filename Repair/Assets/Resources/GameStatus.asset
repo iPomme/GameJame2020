@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   waterLevelSpeed: 1
   waterLevelCheckIntervalInSeconds: 1
-  underWaterSecondBeforeGameOver: 4
+  underWaterSecondBeforeGameOver: 6
   FailureGeneratorIntervalInSecond: 20
   numberOfHulaToSpawn: 5
-  headsetLevel: 1.189
-  waterLevel: 1.5170001
+  headsetLevel: 0.886
+  waterLevel: 1.78
   gameover: 0
   holes:
   - {fileID: 0}

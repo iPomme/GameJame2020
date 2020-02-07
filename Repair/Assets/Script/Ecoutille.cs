@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using DefaultNamespace;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Ecoutille : MonoBehaviour
 {
@@ -23,11 +25,19 @@ public class Ecoutille : MonoBehaviour
 
     public void brokeIt()
     {
-        hole.Status = HoleStatus.BROKEN;
-        _animator.SetBool("isLeaking", true);
-        _audio.Play();
-        var particleEmission = _particle.emission;
-        particleEmission.enabled = true;
+        try
+        {
+            hole.Status = HoleStatus.BROKEN;
+            _animator.SetBool("isLeaking", true);
+            _audio.Play();
+            var particleEmission = _particle.emission;
+            particleEmission.enabled = true;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e);
+        }
+        Debug.LogFormat("Ecoutille '{0}' broken!", this.name);
     }
 
     public void fixIt()

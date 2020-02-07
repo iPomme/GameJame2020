@@ -8,6 +8,8 @@ using Script;
 using UnityEngine;
 using Patch = Script.Patch;
 using Random = UnityEngine.Random;
+using EZCameraShake;
+using UnityEngine.Serialization;
 
 public class GameHandling : MonoBehaviour
 {
@@ -17,14 +19,20 @@ public class GameHandling : MonoBehaviour
 
     public GameObject waterLevel;
 
-    public GameObject[] goupilles;
+    public GameObject[] ecoutilles;
 
     public GameObject PatchPrefab;
+
+    public AudioSource CameraAudio;
+
+    public AudioSource[] AlertAudio;
 
     public GameObject TheChair;
 
     public GameObject Spawner;
-    
+
+    public Animator sub_animator;
+
     private Renderer _invertedSphereRenderer;
 
     private Color _originalColor;
@@ -33,35 +41,59 @@ public class GameHandling : MonoBehaviour
 
     private float _thrust = 1f;
 
+
+    private Color _initialEmissiveSphereColor;
+
     void Start()
     {
         _invertedSphereRenderer = invertedSphere.GetComponentInChildren<Renderer>();
         // Get the initial color of the inversed sphere.
         HideInvertedSphere();
         _originalColor = _invertedSphereRenderer.material.color;
-
+        _initialEmissiveSphereColor = _invertedSphereRenderer.material.GetColor("_EmissionColor");
         RestartGame();
         Debug.Log("GameHandling Started.");
     }
 
+
+    #region Map Range definition
+
+    static float MapRange(float x, float a, float b, float min, float max)
+    {
+        return (((b - a) * (x - min)) / (max - min)) + a;
+    }
+
+    static Func<float, float, float, float, float, float> mapRange = MapRange;
+
+    static Func<float, float> mapRangeOf = ApplyPartial(mapRange, 0f, 6f, 0f, 2f);
+
+    static Func<T1, TResult> ApplyPartial<T1, T2, T3, T4, T5, TResult>
+        (Func<T1, T2, T3, T4, T5, TResult> f, T2 a, T3 b, T4 min, T5 max)
+    {
+        return (x) => f(x, a, b, min, max);
+    }
+
+    #endregion
+
     // Update is called once per frame
     void Update()
     {
-        if (gs.headsetLevel < gs.waterLevel)
+        var distance = gs.headsetLevel - gs.waterLevel;
+        if (distance < 0.1f)
         {
-            if (_fadeCoroutine == null)
-                _fadeCoroutine = StartCoroutine(Fade());
+            _invertedSphereRenderer.enabled = true;
+
+
+            var material = _invertedSphereRenderer.material;
+            var newColor = _initialEmissiveSphereColor * mapRangeOf(-distance);
+            material.SetColor("_EmissionColor", newColor);
             if (_gameoverCoroutine == null)
                 _gameoverCoroutine = StartCoroutine(GameOverControl());
         }
         else
         {
-            if (_fadeCoroutine != null)
-            {
-                StopCoroutine(_fadeCoroutine);
-                _fadeCoroutine = null;
-            }
-
+            var material = _invertedSphereRenderer.material;
+            material.SetColor("_EmissionColor", (_initialEmissiveSphereColor));
             if (_gameoverCoroutine != null)
             {
                 StopCoroutine(_gameoverCoroutine);
@@ -85,7 +117,7 @@ public class GameHandling : MonoBehaviour
     private void createNewPatch()
     {
         if (_currentPatch.IsSome) return;
-        
+
         Debug.Log("Create a new Instance of the prefab");
         try
         {
@@ -127,27 +159,40 @@ public class GameHandling : MonoBehaviour
         if (_gameoverCoroutine != null) StopCoroutine(_gameoverCoroutine);
         _gameoverCoroutine = null;
         gs.gameover = false;
+        FixAllHoles();
     }
 
     private void HideInvertedSphere()
     {
         if (_invertedSphereRenderer == null) return;
-        var material = _invertedSphereRenderer.material;
-        material.color = new Color(material.color.r,
-            material.color.g, material.color.b, 0f);
         _invertedSphereRenderer.enabled = false;
     }
 
     private void crash()
     {
         Debug.Log("Crash!!...");
+        CameraAudio.Play();
+        StartCoroutine(atImpact(3f));
+    }
+
+    private IEnumerator atImpact(float time)
+    {
+        yield return new WaitForSecondsRealtime(time);
+        foreach (var audioSource in AlertAudio)
+        {
+            audioSource.Play();
+        }
+
+        sub_animator.SetTrigger("crash");
+        sub_animator.SetBool("isAlert", true);
+        GenerateAverage();
         _PatchSpanerCoroutine = StartCoroutine(PatchSpawner());
     }
 
     private void FixAllHoles()
     {
         Debug.Log("FixHoles...");
-        foreach (GameObject ecoutille in goupilles)
+        foreach (GameObject ecoutille in ecoutilles)
         {
             ecoutille.GetComponent<Ecoutille>().fixIt();
         }
@@ -156,10 +201,11 @@ public class GameHandling : MonoBehaviour
     private void GenerateAverage()
     {
         Debug.Log("Generate Average...");
-        foreach (GameObject ecoutille in goupilles)
+        foreach (GameObject ecoutille in ecoutilles)
         {
             if (Random.Range(0f, 1f) > .7f)
             {
+                Debug.LogFormat("Damaging '{0}'...", ecoutille.name);
                 ecoutille.GetComponent<Ecoutille>().brokeIt();
             }
         }
@@ -170,7 +216,7 @@ public class GameHandling : MonoBehaviour
      */
     private int NumberOfBrokenHole()
     {
-        return goupilles.Where(x => x.GetComponent<Ecoutille>().isBroken()).Count();
+        return ecoutilles.Where(x => x.GetComponent<Ecoutille>().isBroken()).Count();
     }
 
     /**
@@ -198,8 +244,6 @@ public class GameHandling : MonoBehaviour
     {
         yield return new WaitForSeconds(4f);
         crash();
-        FixAllHoles();
-        GenerateAverage();
     }
 
     /**
@@ -217,7 +261,7 @@ public class GameHandling : MonoBehaviour
             waterLevel.transform.position = transformPosition;
         }
     }
-    
+
     private IEnumerator PatchSpawner()
     {
         for (;;)
