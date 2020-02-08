@@ -7,6 +7,7 @@ TagManager:
   - Shape1
   - Shape2
   - Shape3
+  - nextScenne
   layers:
   - Default
   - TransparentFX

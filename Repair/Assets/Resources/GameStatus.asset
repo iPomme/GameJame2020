@@ -12,14 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d5cc50b21a23164a97fd1a62c5c35ce, type: 3}
   m_Name: GameStatus
   m_EditorClassIdentifier: 
-  waterLevelSpeed: 1
+  waterLevelSpeed: 10
   waterLevelCheckIntervalInSeconds: 1
   underWaterSecondBeforeGameOver: 6
   FailureGeneratorIntervalInSecond: 20
   numberOfHulaToSpawn: 5
   headsetLevel: 0.886
-  waterLevel: 1.78
+  waterLevel: 0
   gameover: 0
   holes:
   - {fileID: 0}
   - {fileID: 0}
+  currentScene: 2

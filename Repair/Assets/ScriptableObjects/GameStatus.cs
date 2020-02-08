@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace DefaultNamespace
 {
@@ -21,11 +22,26 @@ namespace DefaultNamespace
 
         public GameObject[] holes;
 
-        public void restartGame()
+        public int currentScene;
+
+
+        public int getNextScene()
         {
-            foreach (GameObject hole in holes)
+            UnityEngine.Debug.LogFormat("current scene: {0}, max scene: {1}", currentScene,
+                SceneManager.sceneCountInBuildSettings);
+            SceneManager.UnloadSceneAsync(currentScene);
+            if (SceneManager.sceneCountInBuildSettings - 1 == currentScene)
             {
+                SceneManager.LoadScene(0, LoadSceneMode.Single);
+                currentScene = 0;
             }
+            else
+            {
+                currentScene += 1;
+                SceneManager.LoadSceneAsync(currentScene, LoadSceneMode.Single);
+            }
+
+            return currentScene;
         }
     }
 

@@ -143,6 +143,7 @@ public class GameHandling : MonoBehaviour
         if (_failureGeneratorCoroutine != null) StopCoroutine(_failureGeneratorCoroutine);
         _invertedSphereRenderer.material.color = new Color(0, 0, 0, 1f);
         _invertedSphereRenderer.material.DisableKeyword("_EMISSION");
+        gs.getNextScene();
     }
 
     /**
